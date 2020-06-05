@@ -1,0 +1,156 @@
+<script id="json" src="./init.js"></script>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .line {
+            margin: 0 auto;
+            max-width: 690px;
+            width: 100%;
+            line-height: 0;
+        }
+
+        .controller {
+            position: fixed;
+            top: 515px;
+            left: 50%;
+            margin-left: 500px;
+            padding-top: 3px;
+            z-index: 100;
+            width: 100px;
+            border: 1px solid #cecece;
+            background: #fff;
+        }
+
+        .autoarea {
+            overflow: hidden;
+            height: 25px;
+            margin-top: 2px;
+            border-top: 1px solid #cecece;
+            background: #f8f8f8;
+        }
+    </style>
+
+</head>
+<body bgcolor="black">
+<div class="line">
+    <button id="back" onclick="back()" style="height: 100; width: 335;">Back</button>
+    <button id="next" onclick="next()" style="height: 100; width: 335;">Next</button>
+</div>
+<div class="line">
+    <input type="text" id="selEp" placeholder="EP" onclick="">
+    <button onclick="selEp()">Go</button>
+    <input type="button" class="autoarea" value="autoscroll" onclick="pageScroll()"/>
+    <input type="button" class="autoarea" value="Bottom" onclick="bottom()"/>
+    <h2 id="reportNametxt" style="color: aliceblue; text-align: center;"></h2>
+</div>
+
+<div class="line" id="report">
+
+</div>
+<div class="line">
+    <button id="back" onclick="back()" style="height: 100; width: 335;">Back</button>
+    <button id="next" onclick="next()" style="height: 100; width: 335;">Next</button>
+</div>
+</body>
+</html>
+<script>
+    function initData(report){
+
+        parser = new DOMParser();
+        xmlDoc = parser.parseFromString(data, "text/xml");
+        ep = xmlDoc.getElementsByTagName("ep")[report - 1].childNodes[0].nodeValue * 1;
+        reportName = xmlDoc.getElementsByTagName("reportName")[report - 1].childNodes[0].nodeValue;
+        fileName = xmlDoc.getElementsByTagName("fileName")[report - 1].childNodes[0].nodeValue;
+        amount = xmlDoc.getElementsByTagName("amount")[report - 1].childNodes[0].nodeValue * 1;
+        console.log("ตอนที่ : ", ep);
+        console.log("ชื่อตอน :", reportName);
+        console.log("ชื่อไฟล์ :", fileName);
+        console.log("จำนวนตอน", amount);
+
+    }
+
+    function selEp(re) {
+
+        document.getElementById("report").innerHTML = "";
+        var sel = document.getElementById("selEp").value;
+
+        if (!re) {
+            report = sel * 1;
+            console.log("Select >> ", sel);
+        } else {
+            report = re * 1;
+            console.log("Report >> ", re);
+        }
+        initData(report)
+        console.log("ตอนที่ : ", ep);
+        console.log("ชื่อตอน :", reportName);
+        console.log("ชื่อไฟล์ :", fileName);
+        console.log("จำนวนตอน", amount);
+        imgpost();
+    }
+
+    window.onload = function () {
+        initData(1);
+        imgpost();
+    };
+
+
+    function pageScroll() {
+        window.scrollBy(0, 1);
+        scrolldelay = setTimeout(pageScroll, 10);
+    }
+
+
+    function imgpost() {
+        var ob = [];
+        for (var i = 1; i < (amount + 1); i++) {
+            ob.push(fileName + i + ".jpg");
+        }
+
+        document.getElementById("report").innerHTML = "";
+        for (var i = 1; i < (amount + 1); i++) {
+            var node = document.createElement("img");
+            node.setAttribute('src', "./Relife/" + ep + "/" + ob[i - 1]);
+            document.getElementById("reportNametxt").innerText = reportName;
+            //console.log(node);
+            document.getElementById('report').appendChild(node);
+
+
+        }
+
+    }
+
+    function bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function next() {
+
+        if (ep >= 222) {
+            alert("ตอนปัจจุบันเป็นตอนสุดท้ายแล้ว")
+        } else {
+            ep += 1;
+            console.log("next : report >> ", ep);
+            selEp(ep)
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+        }
+    }
+
+    function back() {
+
+        if (ep <= 1) {
+            alert("ตอนปัจจุบันไม่สามารถย้อนกลับได้")
+        } else {
+            ep -= 1;
+            console.log("back : report >> ", ep);
+            selEp(ep)
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+        }
+    }
+</script>
